@@ -1,0 +1,44 @@
+---
+title: 'Data Visualization Part Two'
+date: 2026-06-02T08:44:14Z
+lastmod: '2026-06-02
+tags: ['data-science', 'python', 'JupyterLite', 'U.S. Census Bureau']
+draft: false
+summary: 'A walk-through of a JupyterLite notebook used to visualize U.S. Census Bureau data.'
+layout: PostSimple
+images: ['/static/images/data-vis.png']
+---
+
+## Dependancy Imports
+
+Dependencies are common in almost all software
+
+```python
+# Dependancy Imports
+import pandas as pd
+import matplotlib.pyplot as plt
+import json
+from js import fetch
+```
+
+
+
+
+```python
+
+# Dependancy Imports
+import pandas as pd
+import matplotlib.pyplot as plt
+import json
+from js import fetch
+
+#Helper functions which uses the browser's built-in fetch API
+async def get_json(url):
+    resp = await fetch(url)
+    txt = await resp.text()
+    return json.loads(txt)
+
+# Data Acquisition by using the helper function
+data = await get.json(
+    "https://api.census.gov/data/2026/cps/basic/feb?tabulate=weight(PWSSWGT)
+)
