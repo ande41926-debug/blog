@@ -43,3 +43,84 @@ data = await get.json(
     "https://api.census.gov/data/2026/cps/basic/feb?tabulate=weight(PWSSWGT)SSWGT)&col+PEMLR&row+PEMARITL&for=state:01&PEEDUCA=39&key=YOUR_API_KEY"
 )
 
+# Data Exploration is not shown here 
+# Preliminary Data Analysis is not shown here.
+
+# Data Wrangling a.k.a Data munging 
+# parse the tabulation into a tidy Dataframe
+header = data[0]
+rows = data[1:]
+
+col_codes = [item["PEMLR]for item in header[:-1]]
+row_order = [row[-1] for row in rows]
+
+df = pd.DataFrame([r[:-1]for r in rows], columns=col_codes, index=row_order)
+df = df.apply(pd.to_numeric, errors="coerce").fillna(0)
+
+# Label maps
+pemlr_labels = {
+    "-1": "Not in universe", 
+    "1": "Employed", 
+    "2": "Unemployed",
+    "3": "unemployed, on layoff",
+    "4": "Not in labor force",
+    "5": "Unknown",
+    "6": "Armed forces"
+    "7": "Other"
+}
+
+pemaritl_labels = {
+    "1": "Married, spouse present",
+    "2": "Married, spouse absent",
+    "3": "Widowed",
+    "4": "Divorced",
+    "5": "Separated",
+    "6": "never married"
+}
+
+df.index = [pemaritl_labels.get(str(x), str(x))for x in df.index]
+df.collumns = [pemlr_labels.get(str(x), str(x))for x in df.collumns]
+
+# sort by total (decending)
+df = df.loc[df.sum(axis=1).sort_values(ascending=False).index]
+
+# prepare for data visualization
+# Chart 1: stacked bar chart
+fig, ax = plt.subplots(figsize=12, 7))
+df.plot(kind="bar", stacked=True, ax=ax, colormap="tab20", legend=False)
+ax.set_title("CSP Basic: Labor Force Status by Marital Status\nAlabama, Febraury 2026, Bachelor's degree = 39")
+ax.set_xlabel("Marital Status")
+ax.set_ylabel("Weighted Count")
+ax.legend(title="PEMLR", bbox_to_anchor=(1.02, 1), loc="upper left")
+plt.xticks(rotation=30, ha="right")
+plt.tight_layout()
+plt.show()
+
+# chart 2: heat map using matplotlib only
+fig, ax = plt.subplots(figsize=(10, 6))
+im = ax.imshow(df.values, cmap="Y1GnBu, aspect="auto")
+
+# set tick labels
+ax.set_xticks(range(len(df.collumns)))
+ax.set_yticks(range(len(df.index)))
+ax.set_xticklabels(df.columns, rotation=45, ha="right")
+ax.set_yticklabels(df.index)
+
+ax.set_title("CPS Basic: Weigthed Counts Heatmap\nLabor Force Status by Marital Status")
+ax.set_xlabel("Labor force status (PEMLR)")
+ax.set_ylabel("Marital status (PEMARITL)")
+
+# Add numeric annotations
+for i in range(len(df.index)):
+    for j in range(len(df.columns)):
+        val = df.values[i, j]
+        ax.text(j, i, f"{val:0f}", ha="center", va="center",
+            color="black" if val < df.values.max()/2 else "white")
+
+plt.colorbar(im, ax=ax, label="Weighted count")
+plt.tight_layout()
+# Data Visualization
+plt.show()
+
+
+```
