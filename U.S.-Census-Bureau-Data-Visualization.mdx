@@ -35,15 +35,25 @@ async def get_json(url):
     resp = await fetch(url)
     txt = await resp.text()
     return json.loads(txt)
+```
 
+Helper funtions help Data Aquisistion by Extracting clean and easily understandable data
+from complex and raw data sources.
+
+'''Python
 # Data Acquisition by using the helper function
 data = await get_json(
     "https://api.census.gov/data/2026/cps/basic/feb?tabulate=weight(PWSSWGT)&col+PEMLR&row+PEMARITL&for=state:01&PEEDUCA=39&key=YOUR_API_KEY"
 )
+```
 
 # Data Exploration is not shown here.
 # Preliminary Data Analysis is not shown here.
 
+Data Wrangling or Data Munging is the process of cleaning, transforming, and organizing
+raw and unorganized data.
+
+```python
 # Data Wrangling a.k.a. Data Munging
 # Parse the tabulation into a tidy DataFrame
 header = data[0]
@@ -54,7 +64,12 @@ row_order = [row[-1] for row in rows]
 
 df = pd.DataFrame([r[:-1] for r in rows], columns=col_codes, index=row_order)
 df = df.apply(pd.to_numeric, errors="coerce").fillna(0)
+```
 
+Label Maps are tables that transforms a numerical id into human-readable
+text or easily organizable categories.
+
+```python
 # Label maps
 pemlr_labels = {
     "-1": "Not in universe",
@@ -78,10 +93,14 @@ pemaritl_labels = {
 
 df.index = [pemaritl_labels.get(str(x), str(x)) for x in df.index]
 df.columns = [pemlr_labels.get(str(x), str(x)) for x in df.columns]
+```
 
+```python
 # Sort by total (descending)
 df = df.loc[df.sum(axis=1).sort_values(ascending=False).index]
+```
 
+```python
 # Prepare for Data Visualization
 # Chart 1: stacked bar chart
 fig, ax = plt.subplots(figsize=(12, 7))
@@ -97,7 +116,9 @@ plt.show()
 # Chart 2: heatmap using matplotlib only
 fig, ax = plt.subplots(figsize=(10, 6))
 im = ax.imshow(df.values, cmap="YlGnBu", aspect="auto")
+```
 
+```python
 # Set tick labels
 ax.set_xticks(range(len(df.columns)))
 ax.set_yticks(range(len(df.index)))
@@ -107,7 +128,9 @@ ax.set_yticklabels(df.index)
 ax.set_title("CPS Basic: Weighted Counts Heatmap\nLabor Force Status by Marital Status")
 ax.set_xlabel("Labor force status (PEMLR)")
 ax.set_ylabel("Marital status (PEMARITL)")
+```
 
+```python
 # Add numeric annotations
 for i in range(len(df.index)):
     for j in range(len(df.columns)):
@@ -119,6 +142,10 @@ plt.colorbar(im, ax=ax, label="Weighted count")
 plt.tight_layout()
 # Data Visualization
 plt.show()
+```
+## Graph
+
+![Chart of CPS Basics](/static/images/data.vis.png "CPS Basics Chart")
 
 
 ## Licence
