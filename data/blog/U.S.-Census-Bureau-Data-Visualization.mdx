@@ -101,7 +101,10 @@ state_summary = df.groupby("state", as_index=False)["PWSSWGT"].mean().sort_value
 
 fig, ax = plt.subplots(figsize=(10,6))
 ax.bar(state_summary["state"].astype(str), state_summary["PWSSWGT"], ascending=False).head(10)
-```
+as.set_title("top 10 States by Average PWSSWGT")
+as.set_xlabel("State")
+ax.set_ylabel("Average PWSSWGT")
+
 
 ```python
 # Data Visualization
