@@ -9,6 +9,8 @@ images: ['/static/images/canada/mountains.jpg', '/static/images/canada/toronto.j
 authors: ['default', 'sparrowhawk']
 ---
 
+Import Dependencies.
+
 Most projects rely on pre-written code libraries/modules whether written by the Notebook
 author or by a third-party. When importing from libraries, it is common to use aliases
 such as pd is used below as a shorthand for pandas.
@@ -20,7 +22,9 @@ import matplotlib.pyplot as plt
 import json
 from js import fetch
 ```
+Helper Functions
 
+Helper Functions enable us to write clean human readable code.
 ```python
 # Helper function which uses the browser's built-in fetch API
 async def get_json(url):
@@ -29,12 +33,17 @@ async def get_json(url):
     return json.loads(txt)
 ```
 
+Data Acquisition
+
+Data Acquisition is the process of taking complex and raw real world data
+and transforming it into numericall values.
 ```python
 # Data Acquisition by using the helper function
 data = await get_json(
     "https://api.census.gov/data/2026/cps/basic/feb?tabulate=weight(PWSSWGT)&col+PEMLR&row+PEMARITL&for=state:01&PEEDUCA=39&key=YOUR_API_KEY"
 )
 ```
+
 
 ```python
 # Data Wrangling a.k.a. Data Munging
