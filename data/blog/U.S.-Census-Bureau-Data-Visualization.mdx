@@ -47,7 +47,7 @@ data = await get_json(
 
 Data Wrangling also known as data munging is the process of transforming
 and cleaning raw and messy data into a clean, organized, and readable format.
-this is shown beow when the data transfroms data into the header and rows.
+this is shown below when it is transforming pd to numeric.
 
 ```python
 # Data Wrangling a.k.a. Data Munging
@@ -62,6 +62,9 @@ df = pd.DataFrame([r[:-1] for r in rows], columns=col_codes, index=row_order)
 df = df.apply(pd.to_numeric, errors="coerce").fillna(0)
 ```
 
+Label maps are used in programming to assign a numerical ID to a
+text name. this is shown in the code below because of the different
+classes that are given a numerical value.
 ```python
 # Label maps
 pemlr_labels = {
@@ -109,7 +112,11 @@ plt.show()
 # Graph 2: Heatmap using matplotlib only
 fig, ax = plt.subplots(figsize=(10, 6))
 im = ax.imshow(df.value, cmap="Y1GnBu", aspect="auto")
+```
 
+Setting tick labels is used to set the text labels used on the graph.
+
+```python
 # Set Tick Labels
 ax.set_xticks(range(len(df.columns)))
 ax.set_yticks(range(len(df.index)))
@@ -119,6 +126,10 @@ ax.set_yticklabels(df.index)
 ax.set_title("CPS Basic: Weighted Counts Heatmap\nLabor Force Status by Marital Status")
 ax.set_xlabel("Labor Force status (PEMLR))
 ax.set_ylabel(Marital status (PEMARITL))
+```
+
+Numeric annotation is used to attach numbers and measurements
+to text or visual data to make it measurable, and provide context.
 
 ```python
 # Add numeric annotations
