@@ -37,6 +37,7 @@ Data Acquisition
 
 Data Acquisition is the process of taking complex and raw real world data
 and transforming it into numericall values.
+this is shown below when the helper function 
 ```python
 # Data Acquisition by using the helper function
 data = await get_json(
@@ -44,6 +45,9 @@ data = await get_json(
 )
 ```
 
+Data Wrangling also known as data munging is the process of transforming
+and cleaning raw and messy data into a clean, organized, and readable format.
+this is shown beow when the data transfroms data into the header and rows.
 
 ```python
 # Data Wrangling a.k.a. Data Munging
@@ -91,34 +95,41 @@ df = df.loc[df.sum(axis=1).sort_values(ascending=False).index]
 
 ```python
 # Prepare for Data Visualization
-# Graph 1: Average weighted count by labor force status
-summary = df.groupby("PEMLR", as_index=False)["PWSSWGT"].mean().sort_values("PWSSWGT", acsending=False)
-summary["Label"] = summary["PEMLR"].map(pemlr_labels.get(int(x), str(x)))
-
-fig, ax = plt.subplots(figsize=(12, 7))
-ax.bar(summary["label], summary["PWSSWGT"], color="steelblue")
-ax.set_title("Average PWSSWGT by Labor force Status")
-ax.set_xlabel("Labor Force status(PEMLR)")
-ax.set_ylabel("Average PWSSWGT")
+# Graph 1: Stacked Bar Chart
+fig, ax = plt.subplots(figsize=(12,7))
+df.plot(kind="bar", stacked=True, ax=ax, colormap="tab20", legend=False)
+ax.set_title("CPS Basic: Labor Force Status by Marital Status\nAlabama, February 2026, Bachelor's degree = 39")
+ax.set_xlabel("Marital Status")
+ax.set_ylabel("Weighted Count")
 ax.legend(title="PEMLR", bbox_to_anchor=(1.02, 1), loc="upper left")
 plt.xticks(rotation=30, ha="right")
 plt.tight_layout()
 plt.show()
 
-# Graph 2: Top 10 states by average wheighted count
-state_summary = df.groupby("state", as_index=False)["PWSSWGT"].mean().sort_values("PWSSWGT", ascending=False).head(10)
+# Graph 2: Heatmap using matplotlib only
+fig, ax = plt.subplots(figsize=(10, 6))
+im = ax.imshow(df.value, cmap="Y1GnBu", aspect="auto")
 
-fig, ax = plt.subplots(figsize=(10,6))
-ax.bar(state_summary["state"].astype(str), state_summary["PWSSWGT"], ascending=False).head(10)
-as.set_title("top 10 States by Average PWSSWGT")
-as.set_xlabel("State")
-ax.set_ylabel("Average PWSSWGT")
+# Set Tick Labels
+ax.set_xticks(range(len(df.columns)))
+ax.set_yticks(range(len(df.index)))
+ax.set_xticklabels(df.columns, rotation=45, ha="right")
+ax.set_yticklabels(df.index)
 
+ax.set_title("CPS Basic: Weighted Counts Heatmap\nLabor Force Status by Marital Status")
+ax.set_xlabel("Labor Force status (PEMLR))
+ax.set_ylabel(Marital status (PEMARITL))
 
 ```python
+# Add numeric annotations
+for i in range(len(df.index)):
+    for j in range(len(df.columns)):
+        val = df.values[i, j]
+        ax.text(j, i, f"{val:0f}", ha="center", va="center",
+                color="black" if val < df.values.max()/2 else "white")
+
+plt.colorbar(im, ax=ax, label="Weighted Count")
+plt.tight_layout()
 # Data Visualization
 plt.show()
-
-## Licence
-
-[MIT](https://github.com/timlrx/tailwind-nextjs-starter-blog/blob/main/LICENSE) © [Timothy Lin](https://www.timrlx.com)
+```
